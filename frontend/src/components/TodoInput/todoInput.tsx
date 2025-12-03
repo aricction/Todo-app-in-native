@@ -3,7 +3,7 @@ import { View, TextInput, Text, TouchableOpacity } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
+import { addTodoApi } from "../../api/todo.api";
 interface Props {
   task: string;
   setTask: (text: string) => void;
@@ -35,9 +35,7 @@ const TodoInput: React.FC<Props> = ({
   return (
     <View style={tw`flex-1 p-4`}>
 
-      {/* Deadline Section */}
       <View style={tw`flex-row justify-between mt-3 mb-4`}>
-        {/* Today */}
         <TouchableOpacity
           onPress={() => setDeadline("Today")}
           style={[

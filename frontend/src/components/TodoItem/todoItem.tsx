@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Todo } from "../../types/todo.types";
 import tw from "tailwind-react-native-classnames";
 import { useTodoStore } from "../../store/todostore";
-
+import { MaterialIcons } from "@expo/vector-icons";
 interface Props {
   todo: Todo;
   onToggle: () => void;

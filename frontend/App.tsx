@@ -1,18 +1,27 @@
 import React, { useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, RouteProp } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import Home from "./src/screen/home";
 import TaskList from "./src/screen/taskList";
 import Login from "./src/screen/login";
 import Register from "./src/screen/Register";
 import { MaterialIcons } from "@expo/vector-icons";
+import WelcomePage from "./src/screen/welcome";
 
-const Stack = createStackNavigator();
+type RootStackParamList = {
+   WelcomePage: undefined;
+  Login: { setLoggedIn: (v: boolean) => void };
+  Register: { setLoggedIn: (v: boolean) => void };
+  Tabs: { userName: string };
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
-function BottomTabs() {
+function BottomTabs({ route }: { route: RouteProp<RootStackParamList, "Tabs"> }) {
+  const userName = route?.params?.userName || "User";
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -27,23 +36,23 @@ function BottomTabs() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Home">
+        {() => <Home userName={userName} />}
+      </Tab.Screen>
       <Tab.Screen name="Tasks" component={TaskList} />
     </Tab.Navigator>
   );
 }
 
 export default function App() {
-   const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        
-        {/* Auth Screens */}
+        <Stack.Screen name= "WelcomePage" component={WelcomePage} />
         <Stack.Screen name="Login" initialParams={{ setLoggedIn }} component={Login} />
-        <Stack.Screen name="Register" component={Register}  initialParams={{ setLoggedIn }} />
-
-        {/* App Tabs */}
+        <Stack.Screen name="Register" initialParams={{ setLoggedIn }} component={Register} />
         <Stack.Screen name="Tabs" component={BottomTabs} />
       </Stack.Navigator>
     </NavigationContainer>

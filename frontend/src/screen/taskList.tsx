@@ -28,9 +28,15 @@ const TaskList = ({ navigation }: any) => {
 
           return (
             <View style={tw`bg-white p-4 rounded-lg border mt-6`}>
-              {/* Top Row - Title + Checkbox */}
               <View style={tw`flex-row items-center justify-between`}>
-                <Text style={tw`text-lg font-semibold`}>{item.title}</Text>
+                <Text
+                  style={tw.style(
+                    "text-black text-xl font-semibold",
+                    item.completed && "line-through text-gray-500"
+                  )}
+                >
+                  {item.title}
+                </Text>
 
                 <TouchableOpacity
                   onPress={() => toggleTodo(item.id)}
@@ -42,7 +48,7 @@ const TaskList = ({ navigation }: any) => {
                 </TouchableOpacity>
               </View>
 
-              {/* Priority & Deadline Row */}
+
               <View style={tw`flex-row mt-2`}>
                 {item.priority && (
                   <Text
@@ -57,18 +63,29 @@ const TaskList = ({ navigation }: any) => {
                   </Text>
                 )}
 
-                {item.deadline && (
-                  <Text
-                    style={[tw` text-white px-2 py-1 rounded text-xs w-18 text-center`,
-                      {
-                        backgroundColor: categoryColor,
-                      }
-                      
-                    ]}
-                  > 
-                    {item.deadline}
-                  </Text>
-                )}
+                <View style={tw`flex-row justify-between items-center `}>
+                  {item.deadline && (
+                    <Text
+                      style={[
+                        tw`text-white px-2 py-1 rounded text-xs text-center `,
+                        { backgroundColor: categoryColor },
+                      ]}
+                    >
+                      {item.deadline}
+                    </Text>
+                  )}
+
+                  {item.completed && (
+                    <TouchableOpacity onPress={() => removeTodo(item.id)}>
+                      <MaterialIcons
+                        name="delete-outline"
+                        size={24}
+                        color=""
+                        style={tw`ml-6 px-2`}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           );
