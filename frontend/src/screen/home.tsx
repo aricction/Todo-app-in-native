@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import {
+  StatusBar,
   StyleSheet,
   Text,
   View,
   SafeAreaView,
+  ScrollView,
   FlatList,
   Modal,
   TouchableOpacity,
@@ -23,15 +24,14 @@ export default function Home() {
   const removeTodo = useTodoStore((state) => state.removeTodo);
   const categories = useTodoStore((state) => state.categories);
   const getTaskCount = useTodoStore((state) => state.getTaskCount);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("low");
   const [category, setCategory] = useState("Daily");
-  const [task, setTask] = React.useState("");
-const [deadline, setDeadline] = useState("Today"); // default
-const [selectedDate, setSelectedDate] = useState(null);
-const [selectedTime, setSelectedTime] = useState(null);
+  const [task, setTask] = useState("");
+  const [deadline, setDeadline] = useState("Today");
 
   const handleAddTask = () => {
     if (!task.trim()) return;
@@ -40,52 +40,83 @@ const [selectedTime, setSelectedTime] = useState(null);
     setDescription("");
     setPriority("low");
     setCategory("Daily");
+    setTask("");
     setModalVisible(false);
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-white pt-12 px-4 pb-4`}>
-      <View>
-        <Text style={styles.header}>Hello, Govind 👋</Text>
-        <Text style={tw`text-gray-400 text-16px`}>
-          Your daily adventure starts now
-        </Text>
-      </View>
-      <View style={tw`flex-1 mt-8`}>
-        <View style={tw`flex-row flex-wrap justify-between mb-4`}>
-          {categories.map((cat) => (
-            <View
-              key={cat}
-              style={[
-                tw`p-6 rounded-xl mb-4`,
-                {
-                  backgroundColor: "#F97316",
-                  width: "48%",
-                },
-              ]}
-            >
-              <Text style={tw`text-white font-bold text-2xl text-black`}>{cat}</Text>
-              <Text style={tw`text-white`}>{getTaskCount(cat)} Tasks</Text>
-            </View>
-          ))}
+    <SafeAreaView style={tw`flex-1 bg-white pt-6 px-4`}>
+      {/* Header */}
+      <View style={tw`flex-row items-center`}>
+        <View
+          style={[
+            tw`rounded-full border`,
+            {
+              width: 55,
+              height: 55,
+              backgroundColor: "#F26D58",
+              marginRight: 12,
+            },
+          ]}
+        />
+        <View>
+          <Text style={styles.header}>Hello, Govind 👋</Text>
+          <Text style={tw`text-gray-400 text-16px`}>
+            Your daily adventure starts now
+          </Text>
         </View>
       </View>
-      
-   {todos.length > 0 && (
-  <Text style={tw`text-xl font-bold mt-4 `}>Recent Tasks</Text>
-)}
-      <FlatList
-        data={todos}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Task
-            todo={item}
-            onToggle={() => toggleTodo(item.id)}
-            onDelete={() => removeTodo(item.id)}
-          />
-        )}
-        style={{ marginTop: 20 }}
-      />
+
+      <View style={tw`flex-row flex-wrap justify-between mt-8 mb-4`}>
+        {categories.map((cat) => (
+          <View
+            key={cat.name}
+            style={[
+              tw`p-3 rounded-2xl mb-4`,
+              { backgroundColor: cat.color, width: "48%" },
+            ]}
+          >
+            <View style={tw`flex-row items-center mb-2`}>
+              <MaterialIcons
+                name={cat.icon}
+                size={28}
+                color="white"
+                style={[tw`rounded-full p-2`, { backgroundColor: "#00000038" }]}
+              />
+              <View>
+                <Text style={tw`font-bold text-2xl text-black ml-2`}>
+                  {cat.name}
+                </Text>
+                <Text style={tw`text-black ml-2`}>
+                  {getTaskCount(cat.name)} Tasks
+                </Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+
+      {todos.length > 0 && (
+        <Text style={tw`text-xl font-bold mt-4`}>Recent Tasks</Text>
+      )}
+      <ScrollView
+        contentContainerStyle={tw`pb-24`}
+        showsVerticalScrollIndicator={false}
+      >
+        <FlatList
+          data={todos}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Task
+              todo={item}
+              onToggle={() => toggleTodo(item.id)}
+              onDelete={() => removeTodo(item.id)}
+            />
+          )}
+          scrollEnabled={false} // disable internal scroll
+          style={tw`mt-4`}
+        />
+      </ScrollView>
 
       <AddButton onPress={() => setModalVisible(true)} />
 
@@ -98,12 +129,9 @@ const [selectedTime, setSelectedTime] = useState(null);
         <View
           style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}
         >
-          <View
-            style={[tw`bg-white w-11/12  p-6 rounded-lg `, { height: 700 }]}
-          >
+          <View style={[tw`bg-white w-11/12 p-6 rounded-lg`, { height: 700 }]}>
             <View style={tw`flex-row justify-between items-center mb-4`}>
               <Text style={tw`text-xl font-bold`}>Create a New Task</Text>
-
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 style={tw`bg-gray-300 px-4 py-4 rounded-full`}
@@ -121,8 +149,8 @@ const [selectedTime, setSelectedTime] = useState(null);
               setPriority={setPriority}
               category={category}
               setCategory={setCategory}
-            deadline={deadline}
-            setDeadline={setDeadline}
+              deadline={deadline}
+              setDeadline={setDeadline}
             />
 
             <View style={tw`w-full mt-4`}>
@@ -143,13 +171,6 @@ const [selectedTime, setSelectedTime] = useState(null);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 50,
-    paddingHorizontal: 16,
-  },
-
   header: {
     fontSize: 24,
     fontWeight: "700",

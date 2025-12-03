@@ -2,8 +2,13 @@ import { create } from "zustand";
 import { Todo } from "../types/todo.types";
 import { nanoid } from "nanoid/non-secure";
 
+interface Category {
+  name: string;
+  color: string;
+}
+
 interface TodoStore {
-  categories: string[];
+  categories: Category[];
   todos: Todo[];
 
   addTodo: (
@@ -22,7 +27,13 @@ interface TodoStore {
 }
 
 export const useTodoStore = create<TodoStore>((set, get) => ({
-  categories: ["Daily", "Travel", "Health", "Social"],
+ categories: [
+  { name: "Daily", color: "#5594F1", icon: "event-repeat" },
+  { name: "Travel", color: "#FCC546", icon: "local-airport" },
+  { name: "Health", color: "#55C1C2", icon: "fitness-center" },
+  { name: "Social", color: "#F26D58", icon: "groups" },
+],
+
 
   todos: [],
 

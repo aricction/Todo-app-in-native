@@ -11,10 +11,10 @@ const AddButton = ({ onPress }: Props) => {
   return (
       <TouchableOpacity
       onPress={onPress}
-        style={[tw`absolute bottom-11 `, { alignSelf: "center" }]}
+        style={[tw`absolute bottom-0 `, { alignSelf: "center" ,zIndex: 999  }]}
       >
         <View
-          style={[tw` w-16 h-16 rounded-full items-center justify-center`, {backgroundColor: "#F97316"}]}
+          style={[tw`z-[999] w-16 h-16 rounded-full items-center justify-center`, {backgroundColor: "#f26d58", zIndex: 999 }]}
         >
           <MaterialIcons name="add" size={28} color="white" />
         </View>

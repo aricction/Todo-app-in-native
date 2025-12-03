@@ -142,7 +142,7 @@ const TodoInput: React.FC<Props> = ({
             style={[
               tw`px-4 py-5 rounded-lg border border-gray-400 mb-2`,
               {
-                backgroundColor: category === c ? "#F97316" : "#fff",
+                backgroundColor: category === c ? "#F26d58" : "#fff",
                 flexBasis: "48%",
               },
             ]}
@@ -181,7 +181,7 @@ const TodoInput: React.FC<Props> = ({
             style={[
               tw`px-4 py-3 rounded-lg border border-gray-400 mb-2`,
               {
-                backgroundColor: priority === p ? "#F97316" : "#fff",
+                backgroundColor: priority === p ? "#F26d58" : "#fff",
                 flexBasis: "30%",
               },
             ]}

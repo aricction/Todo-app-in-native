@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import { Todo } from "../../types/todo.types";
 import tw from "tailwind-react-native-classnames";
+import { useTodoStore } from "../../store/todostore";
 
 interface Props {
   todo: Todo;
@@ -9,7 +10,11 @@ interface Props {
   onDelete: () => void;
 }
 
+
+
 const TodoItem = ({ todo, onToggle, onDelete }: Props) => {
+
+  const categories = useTodoStore((state)=> state.categories);
   if (!todo || !todo.title) return null;
 
   return (
@@ -17,7 +22,7 @@ const TodoItem = ({ todo, onToggle, onDelete }: Props) => {
      {todo ? (
         <View>
 
-         <View style={tw`flex-col`}>
+         <View style={tw`flex-col `}>
           
        
         <Text
@@ -37,7 +42,10 @@ const TodoItem = ({ todo, onToggle, onDelete }: Props) => {
 
         {todo.priority ? (
           <Text
-            style={tw`mt-2 bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs w-24 text-center`}
+            style={[tw`mt-2 text-white px-2 py-1 rounded text-xs w-24 text-center`,
+              {backgroundColor: categories.find((c) => c.name === todo.category)?.color
+ }
+            ]}
           >
             {todo.priority.toUpperCase()}
           </Text>
