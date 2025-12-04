@@ -6,7 +6,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 const WelcomePage = ({navigation}: any) => {
     
   return (
-    <View style={tw`flex-1 items-center justify-center p-6`}>
+    <View style={tw`flex-1 items-center justify-center p-6 mt-16`}>
 
       <Image
         source={require("../../assets/Vector.png")}
@@ -18,12 +18,15 @@ const WelcomePage = ({navigation}: any) => {
       </Text>
 
        <Text
-            style={tw`text-black font-bold`}
+            style={tw`text-black font-bold text-lg`}
             onPress={() => navigation.navigate("Login" as never)}
           >
         Get Started
       </Text>
+       <View style={tw`flex-1 justify-end items-center mb-1`}>
 
+      <Text style={tw``}>Built by govind </Text>
+       </View>
     </View>
   );
 };

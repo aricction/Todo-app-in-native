@@ -1,4 +1,4 @@
-const BASE_URL = "http://10.104.86.80:5000/auth/api";
+export const BASE_URL = "https://backendandroid-production-7995.up.railway.app/auth/api";
 
 export const registerUser = async (
   name: string,
@@ -22,4 +22,3 @@ export const loginUser = async (email: string, password: string) => {
   });
   return response.json();
 };
-

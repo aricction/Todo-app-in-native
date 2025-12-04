@@ -1,4 +1,4 @@
-const BASE_URL = "http://10.104.86.80:5000/todo";
+export const BASE_URL = "https://backendandroid-production-7995.up.railway.app/todo";
 
 export const addTodoApi = async (payload: {
   title: string;
