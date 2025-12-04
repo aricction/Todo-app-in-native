@@ -38,19 +38,29 @@ export default function Home({ userName }: Props) {
   const [category, setCategory] = useState("Daily");
   const [deadline, setDeadline] = useState("Today");
   const [loading, setLoading] = useState(true);
+const [addingTask, setAddingTask] = useState(false); 
+  
+const handleAddTask = async () => {
+  if (!task.trim()) return;
 
-  const handleAddTask = async () => {
-    if (!task.trim()) return;
-
+  setAddingTask(true);
+  try {
     await addTodo(task.trim(), description.trim(), priority, category, deadline);
 
+    // reset fields
     setTask("");
     setDescription("");
     setPriority("low");
     setCategory("Daily");
     setDeadline("Today");
     setModalVisible(false);
-  };
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setAddingTask(false); 
+  }
+};
+
 
   useEffect(() => {
     const loadTodos = async () => {
@@ -61,7 +71,9 @@ export default function Home({ userName }: Props) {
     loadTodos();
   }, []);
 
-  const sortedlist = [...todos].sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const sortedlist = [...todos].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   return (
     <SafeAreaView style={tw`flex-1 bg-white pt-6 px-4`}>
@@ -70,7 +82,12 @@ export default function Home({ userName }: Props) {
         <View
           style={[
             tw`rounded-full border`,
-            { width: 55, height: 55, backgroundColor: "#F26D58", marginRight: 12 },
+            {
+              width: 55,
+              height: 55,
+              backgroundColor: "#F26D58",
+              marginRight: 12,
+            },
           ]}
         />
         <View>
@@ -86,7 +103,10 @@ export default function Home({ userName }: Props) {
         {categories.map((cat) => (
           <View
             key={cat.name}
-            style={[tw`p-3 rounded-2xl mb-4`, { backgroundColor: cat.color, width: "48%" }]}
+            style={[
+              tw`p-3 rounded-2xl mb-4`,
+              { backgroundColor: cat.color, width: "48%" },
+            ]}
           >
             <View style={tw`flex-row items-center mb-2`}>
               <MaterialIcons
@@ -96,8 +116,12 @@ export default function Home({ userName }: Props) {
                 style={[tw`rounded-full p-2`, { backgroundColor: "#00000038" }]}
               />
               <View>
-                <Text style={tw`font-bold text-2xl text-black ml-2`}>{cat.name}</Text>
-                <Text style={tw`text-black ml-2`}>{getTaskCount(cat.name)} Tasks</Text>
+                <Text style={tw`font-bold text-2xl text-black ml-2`}>
+                  {cat.name}
+                </Text>
+                <Text style={tw`text-black ml-2`}>
+                  {getTaskCount(cat.name)} Tasks
+                </Text>
               </View>
             </View>
           </View>
@@ -111,9 +135,14 @@ export default function Home({ userName }: Props) {
         </View>
       ) : (
         <>
-          {todos.length > 0 && <Text style={tw`text-xl font-bold mt-4`}>Recent Tasks</Text>}
+          {todos.length > 0 && (
+            <Text style={tw`text-xl font-bold mt-4`}>Recent Tasks</Text>
+          )}
 
-          <ScrollView contentContainerStyle={tw`pb-24`} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            contentContainerStyle={tw`pb-24`}
+            showsVerticalScrollIndicator={false}
+          >
             <FlatList
               data={sortedlist}
               keyExtractor={(item) => item.id}
@@ -131,16 +160,25 @@ export default function Home({ userName }: Props) {
         </>
       )}
 
-      {/* Add Task Button */}
       <AddButton onPress={() => setModalVisible(true)} />
 
       {/* Modal */}
-      <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}
+        >
           <View style={[tw`bg-white w-11/12 p-6 rounded-lg`, { height: 700 }]}>
             <View style={tw`flex-row justify-between items-center mb-4`}>
               <Text style={tw`text-xl font-bold`}>Create a New Task</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={tw`bg-gray-300 px-4 py-4 rounded-full`}>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={tw`bg-gray-300 px-4 py-4 rounded-full`}
+              >
                 <MaterialIcons name="close" size={25} />
               </TouchableOpacity>
             </View>
@@ -159,9 +197,22 @@ export default function Home({ userName }: Props) {
             />
 
             <View style={tw`w-full mt-4`}>
-              <TouchableOpacity onPress={handleAddTask} style={tw`bg-black w-full h-12 rounded-xl items-center justify-center`}>
-                <Text style={tw`text-white text-lg font-semibold`}>Create</Text>
-              </TouchableOpacity>
+              {addingTask  ? (
+                <View
+                  style={tw`bg-black w-full h-12 rounded-xl items-center justify-center`}
+                >
+                  <ActivityIndicator size="small" color="white" />
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={handleAddTask}
+                  style={tw`bg-black w-full h-12 rounded-xl items-center justify-center`}
+                >
+                  <Text style={tw`text-white text-lg font-semibold`}>
+                    Create
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

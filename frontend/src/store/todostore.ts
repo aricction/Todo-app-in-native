@@ -41,10 +41,10 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
   fetchTodos: async () => {
     const res = await getTodosApi();
     if (res.success) {
-      const mappedTodos = res.todos.map((t) => ({
-        ...t,
-        id: t._id,
-      }));
+      const mappedTodos = res.todos.map((t: any) => ({
+  ...t,
+  id: t._id,
+}));
       set({ todos: mappedTodos });
     } else {
       set({ todos: [] });
@@ -55,7 +55,7 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     const payload = { title, description, priority, category, deadline };
     const res = await addTodoApi(payload);
 
-    if (res && res.id) {
+    if (res && res._id) {
       set((state) => ({
         todos: [
           ...state.todos,
@@ -98,16 +98,31 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
       ),
     })),
 
-  removeTodo: async (id: string) => {
-    const res = await deleteTodoApi(id);
-    if (res.success) {
-      set((state) => ({
-        todos: state.todos.filter((todo) => todo.id !== id),
-      }));
-    } else {
-      console.error("Failed to delete todo");
-    }
-  },
+removeTodo: async (id: string) => {
+  // Find the todo
+  const todo = get().todos.find((t) => t.id === id);
+
+  // If ID is not a MongoDB ObjectId → local delete only
+  if (!todo || id.length !== 24) {
+    set((state) => ({
+      todos: state.todos.filter((t) => t.id !== id),
+    }));
+    return;
+  }
+
+  // Otherwise → delete from backend
+  const res = await deleteTodoApi(id);
+
+  if (res.success) {
+    set((state) => ({
+      todos: state.todos.filter((todo) => todo.id !== id),
+    }));
+  } else {
+    console.error("Failed to delete todo");
+  }
+},
+
+
 
   getTasksByCategory: (category) =>
     (get().todos || []).filter((todo) => todo.category === category),

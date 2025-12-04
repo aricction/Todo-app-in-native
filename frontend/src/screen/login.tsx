@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,7 +20,7 @@ const Login = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<Record<string, LoginRouteParams>, string>>();
   const { setLoggedIn } = route.params;
-
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,10 +28,11 @@ const Login = () => {
   const handleLogin = async () => {
     if (!email || !password) return alert("All fields are required");
 
+    setLoading(true);
     try {
       const res = await loginUser(email, password);
       if (res.token) {
-        setLoggedIn(true); 
+        setLoggedIn(true);
         navigation.navigate("Tabs" as never, { userName: res.name }); // redirect to home
       } else {
         alert(res.msg || "Login failed");
@@ -85,12 +87,28 @@ const Login = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={[tw`p-4 rounded-lg items-center justify-center`, { backgroundColor: "#F26d58" }]}
-        >
-          <Text style={tw`text-white font-bold text-lg`}>Sign In</Text>
-        </TouchableOpacity>
+        <View style={tw`mb-6`}>
+          {loading ? (
+            <View
+              style={[
+                tw`p-4 rounded-lg items-center justify-center`,
+                { backgroundColor: "#F26d58" },
+              ]}
+            >
+              <ActivityIndicator size="small" color="white" />
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={[
+                tw`p-4 rounded-lg items-center justify-center`,
+                { backgroundColor: "#F26d58" },
+              ]}
+            >
+              <Text style={tw`text-white font-bold text-lg`}>Sign In</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Alternative login */}

@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import tw from "tailwind-react-native-classnames";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -15,6 +16,7 @@ const Register = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { setLoggedIn } = route.params as { setLoggedIn: (v: boolean) => void };
+  const [loading, setLoading] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,7 +25,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async () => {
-    if(!name){
+    if (!name) {
       return alert("enter your name");
     }
 
@@ -35,13 +37,13 @@ const Register = () => {
       return alert("Passwords do not match");
     }
 
+    setLoading(true);
     try {
       const res = await registerUser(name, email, password, retypePassword);
       if (res.token) {
         setLoggedIn(true);
         alert(`Welcome ${res.email}`);
-              navigation.navigate("Tabs" as never);
-
+        navigation.navigate("Tabs" as never, { userName: res.name });
       } else {
         alert(res.msg || "Registration failed");
       }
@@ -61,15 +63,13 @@ const Register = () => {
       </View>
 
       <View style={tw`mt-6`}>
-        
-         <Text style={tw`text-base font-semibold mb-2`}>Name</Text>
+        <Text style={tw`text-base font-semibold mb-2`}>Name</Text>
         <TextInput
           placeholder="Enter your name"
           value={name}
           onChangeText={setName}
           style={tw`bg-gray-100 p-5 rounded-lg mb-4`}
         />
-
 
         <Text style={tw`text-base font-semibold mb-2`}>E-mail</Text>
         <TextInput
@@ -92,8 +92,8 @@ const Register = () => {
         <View style={tw`relative mb-6`}>
           <TextInput
             placeholder="Retype your password"
-            value={retypePassword}  // fixed value
-            onChangeText={setRetypePassword}  // fixed onChange
+            value={retypePassword} // fixed value
+            onChangeText={setRetypePassword} // fixed onChange
             secureTextEntry={!showPassword}
             style={tw`bg-gray-100 p-5 rounded-lg pr-12`}
           />
@@ -109,12 +109,28 @@ const Register = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={handleRegister}
-          style={[tw`p-4 rounded-lg items-center justify-center`, { backgroundColor: "#F26D58" }]}
-        >
-          <Text style={tw`text-white font-bold text-lg`}>Sign Up</Text>
-        </TouchableOpacity>
+        <View style={tw`mb-6`}>
+          {loading ? (
+            <View
+              style={[
+                tw`p-4 rounded-lg items-center justify-center`,
+                { backgroundColor: "#F26d58" },
+              ]}
+            >
+              <ActivityIndicator size="small" color="white" />
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={handleRegister}
+              style={[
+                tw`p-4 rounded-lg items-center justify-center`,
+                { backgroundColor: "#F26d58" },
+              ]}
+            >
+              <Text style={tw`text-white font-bold text-lg`}>Register</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <View style={tw`mt-12 flex justify-center items-center`}>
